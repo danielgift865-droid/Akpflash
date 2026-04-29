@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt - <%= data.ref %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+     <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .receipt-container { 
+            background: white; 
+            max-width: 440px;
+            width: 100%;
+            border-radius: 1.5rem; 
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        .receipt-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 2.5rem 2rem;
+            color: white;
+            text-align: center;
+        }
+        .status-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .amount-display {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .details-grid {
+            padding: 2rem;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: #64748b; font-size: 0.85rem; font-weight: 500; }
+        .detail-value { color: #1e293b; font-size: 0.85rem; font-weight: 600; text-align: right; }
+        
+        .divider {
+            height: 1px;
+            background: repeating-linear-gradient(90deg, #e2e8f0, #e2e8f0 4px, transparent 4px, transparent 8px);
+            margin: 0.5rem 0;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .download-btn:hover { background: #334155; }
+        .download-btn:active { transform: scale(0.98); }
+
+        .reveal {
+            animation: revealContent 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+
+        @keyframes revealContent {
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .skeleton-shell {
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-shell::after {
+            content: "";
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transform: translateX(-100%);
+            animation: shimm 1.5s infinite;
+        }
+
+        @keyframes shimm { 100% { transform: translateX(100%); } }
+
+        .bank-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 8rem;
+            opacity: 0.03;
+            pointer-events: none;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 sm:p-10">
+    
+    <div id="skeleton" class="receipt-container" style="position: absolute; z-index: 10;">
+        <div class="h-48 bg-slate-200">
+             <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimm_1.5s_infinite]"></div>
+        </div>
+        <div class="p-8 space-y-6">
+            <div class="flex justify-between"><div class="skeleton-shell h-4 w-24"></div><div class="skeleton-shell h-4 w-32"></div></div>
+            <div class="flex justify-between"><div class="skeleton-shell h-4 w-20"></div><div class="skeleton-shell h-4 w-40"></div></div>
+            <div class="flex justify-between"><div class="skeleton-shell h-4 w-28"></div><div class="skeleton-shell h-4 w-24"></div></div>
+            <div class="skeleton-shell h-14 w-full mt-10"></div>
+        </div>
+    </div>
+
+    <div id="content" class="receipt-container reveal" style="opacity: 0;">
+        <div class="bank-seal">VERIFIED</div>
+        
+        <div class="receipt-header">
+            <div class="flex justify-center mb-6">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
+                Transaction Successful
+            </div>
+            <div class="amount-display"><%= data.amount %></div>
+            <div class="text-white/60 text-xs font-medium uppercase tracking-widest">Digital Payment Receipt</div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-row">
+                <span class="detail-label">Beneficiary</span>
+                <span class="detail-value"><%= data.name %></span>
+            </div>
+            <% if (data.bankName) { %>
+            <div class="detail-row">
+                <span class="detail-label">Bank Name</span>
+                <span class="detail-value"><%= data.bankName %></span>
+            </div>
+            <% } %>
+            <% if (data.accountNumber) { %>
+            <div class="detail-row">
+                <span class="detail-label">Account Number</span>
+                <span class="detail-value"><%= data.accountNumber %></span>
+            </div>
+            <% } %>
+            <div class="detail-row">
+                <span class="detail-label">Transaction Date</span>
+                <span class="detail-value"><%= new Date(data.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) %></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Transaction Reference</span>
+                <span class="detail-value font-mono text-[11px]"><%= data.ref %></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment Channel</span>
+                <span class="detail-value"><%= data.channel %></span>
+            </div>
+            
+            <div class="divider my-4"></div>
+
+            <% if (data.notes) { %>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 mb-6">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Remarks / Narration</div>
+                <div class="text-[13px] text-slate-600 leading-relaxed font-medium"><%= data.notes %></div>
+            </div>
+            <% } %>
+
+            <div class="flex flex-col items-center mb-8">
+                <img src="<%= qr %>" class="w-24 h-24 mb-3 grayscale opacity-80 hover:grayscale-0 transition-all p-1 bg-white border border-slate-100 rounded-lg" />
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Scan to verify authenticity</span>
+            </div>
+
+            <a href="/receipt/<%= data._id %>/pdf" class="download-btn group">
+                <svg class="w-5 h-5 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Official Receipt
+            </a>
+        </div>
+        
+        <div class="bg-slate-50 p-6 text-center border-t border-slate-100">
+            <div class="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                This is a computer generated receipt and does not require a physical signature.<br>
+                Issued by Apex Suite Financial Services.
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+        End-to-End Encrypted
+    </footer>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const skeleton = document.getElementById('skeleton');
+                const content = document.getElementById('content');
+                if (skeleton) skeleton.style.display = 'none';
+                if (content) content.style.opacity = '1';
+            }, 600);
+        });
+    </script>
+</body>
+</html>

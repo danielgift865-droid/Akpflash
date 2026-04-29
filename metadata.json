@@ -1,0 +1,6 @@
+{
+  "name": "Enterprise Service Suite",
+  "description": "A comprehensive full-stack platform featuring authentication, PDF generation, QR code integration, and automated emailing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["auth", "database", "pdf-generation", "emailing", "qr-codes"]
+}
